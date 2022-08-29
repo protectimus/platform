@@ -1,0 +1,15 @@
+radius:
+  secret: secret
+  auth-port: 1822
+
+auth:
+  providers:
+#    - PROTECTIMUS_OTP
+#    - PROTECTIMUS_PASSWORD
+
+protectimus-api:
+  login:
+  api-key:
+  url: https://api.protectimus.com/
+  resource-name:
+  resource-id:

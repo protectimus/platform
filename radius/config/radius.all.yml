@@ -1,0 +1,59 @@
+radius:
+  secret: secret
+  auth-port: 1822
+  attributes:
+    defaults:
+      Service-Type: NAS-Prompt-User
+    for-users:
+      john:
+        Service-Type: Login-User
+
+auth:
+  #  Could be :
+  #  - LDAP
+  #  - PROTECTIMUS_PASSWORD
+  #  - PROTECTIMUS_OTP
+  #  - PROTECTIMUS_PUSH
+  providers:
+    - LDAP
+    - PROTECTIMUS_OTP
+
+  # When re-enter-otp is enabled, password is not requested after unsuccessful OTP check
+  re-enter-otp: true
+
+  # When normalization is enabled any domain information is stripped from the username,
+  # so "username", "DOMAIN\username" and "username@domain.com" would all resolve to a single "username"
+  principal-normalization: true
+
+  # Inline mode allows you to use 2fa in case when Access-Challenge is not supported.
+  # Inline mode can be activated with 'enabled: true' or using request attribute 'State=INLINE'
+  # In this case password must be in following format 'password,otp', if using separator: ','
+  inline-mode:
+    enabled: false
+    separator: ''
+
+ldap:
+  base: dc=test,dc=com
+  urls:
+    - ldap://127.0.0.1:389
+
+  # Is used for LDAP authentication by defined attribute
+  principal-attribute: userPrincipalName
+  custom-filter: (memberof=cn=managers,ou=groups,dc=test,dc=com)
+  base-environment:
+    -java.naming.referral: follow
+
+protectimus-api:
+  login: test@protectimus.com
+  api-key: secret
+  url: https://api.protectimus.com/
+
+#  Use either id or resource name
+#  resource-id: 1
+  resource-name: 'r1'
+
+logging:
+  file:
+    name: radius.log
+  level:
+    com.protectimus.radius: INFO
