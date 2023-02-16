@@ -1,6 +1,6 @@
 radius:
   secret: secret
-  auth-port: 1822
+  auth-port: 1812
   attributes:
     defaults:
       Service-Type: NAS-Prompt-User
