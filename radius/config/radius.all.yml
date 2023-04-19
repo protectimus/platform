@@ -2,11 +2,16 @@ radius:
   secret: secret
   auth-port: 1812
   attributes:
+    copy-state: true
     defaults:
       Service-Type: NAS-Prompt-User
     for-users:
       john:
         Service-Type: Login-User
+    ldap:
+      memberOf:
+        cn=admins,ou=groups,dc=test,dc=com:
+          Service-Type: Administrative
 
 auth:
   #  Could be :
@@ -36,6 +41,8 @@ ldap:
   base: dc=test,dc=com
   urls:
     - ldap://127.0.0.1:389
+  username:
+  password:
 
   # Is used for LDAP authentication by defined attribute
   principal-attribute: userPrincipalName
@@ -47,13 +54,8 @@ protectimus-api:
   login: test@protectimus.com
   api-key: secret
   url: https://api.protectimus.com/
-
-#  Use either id or resource name
-#  resource-id: 1
-  resource-name: 'r1'
+  resource-id: 1
 
 logging:
-  file:
-    name: radius.log
   level:
     com.protectimus.radius: INFO
