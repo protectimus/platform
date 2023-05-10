@@ -1,28 +1,52 @@
 radius:
   secret: secret
   auth-port: 1812
+  listen-address: 0.0.0.0
+  # Attribute list extension for RADIUS
+  dictionaries:
+    - file:<some_path>/<some_name>.dat
+  # Attributes that will be returned in response on successful authentication
   attributes:
+    # Copies each returned attribute into the response
     copy-state: true
+    # Attributes for all users
     defaults:
       Service-Type: NAS-Prompt-User
+    # Attributes for specific users
     for-users:
       john:
         Service-Type: Login-User
+    # Attributes for specific user or group of users in LDAP
     ldap:
       memberOf:
-        cn=admins,ou=groups,dc=test,dc=com:
+        '[cn=admins,ou=groups,dc=test,dc=com]':
           Service-Type: Administrative
+      uid:
+        john_wick:
+          Class: Pro
+    # When conditional is enabled, it allows to specify a script that will check the condition under which the attribute will be returned
+    conditional:
+      '[ldapUser.attributes["uid"] == "john"]':
+        Service-Type:
+          - Login-User
+      '[request.getAttributeValue("User-Name") == "john"]':
+        Class:
+          - RDP_HeadOffice_GP
 
 auth:
-  #  Could be :
-  #  - LDAP
-  #  - PROTECTIMUS_PASSWORD
-  #  - PROTECTIMUS_OTP
-  #  - PROTECTIMUS_PUSH
   providers:
+    #  Could be :
     - LDAP
+    - PROTECTIMUS_PASSWORD
     - PROTECTIMUS_OTP
-
+    # When BYPASS_PASSWORD is enabled, any password will be valid. Works both with inline-mode and without. Only works if LDAP or PROTECTIMUS_PASSWORD is not enabled
+    - BYPASS_PASSWORD
+  # When bypass-otp is enabled, OTP is not requested for specified users
+  bypass-otp:
+    ldap-filter: (memberOf=cn=bypass-otp,ou=groups,dc=test,dc=com)
+    usernames:
+      - john
+      - luci
   # When re-enter-otp is enabled, password is not requested after unsuccessful OTP check
   re-enter-otp: true
 
