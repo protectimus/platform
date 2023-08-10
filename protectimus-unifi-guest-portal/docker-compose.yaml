@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  platform:
+    image: protectimusltd/protectimus-unifi-guest-portal:${IMAGE_TAG}
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./config/guest-portal.yml:/app/guest-portal.yml
