@@ -1,0 +1,52 @@
+server:
+  port: 8080
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:keystore/guest-portal.p12
+    key-store-password: password
+    key-alias: guest-portal
+
+unifi:
+  cookie-expiration-time: 30000
+  base-url: https://localhost:8443
+  username: admin
+  password: admin
+  sites-verification-enabled: true
+  sites:
+    - default
+  session:
+    duration-minutes: 90
+    download-speed: 2048
+    upload-speed: 640
+    quota: 4096
+  redirect-page: https://www.google.com
+
+report:
+  csv:
+    params:
+      - action
+      - id
+      - ip
+      - ap
+      - ssid
+      - time
+      - phoneNumber
+    date-format: 'yyyy-MM-dd HH:mm:ss z'
+    zone-id: UTC
+
+protectimus-api:
+  login: test@protectimus.com
+  api-key: secret
+  url: https://api.protectimus.com/
+  resource-id: 1
+
+accept-self-signed: false
+
+logging:
+  file:
+    name: protectimus-guest-portal.log
+  level:
+    sun.jersey.api: INFO
+    com.protectimus: INFO
+    org.springframework.web: INFO
