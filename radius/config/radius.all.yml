@@ -1,13 +1,5 @@
 radius:
-  #  Default secret
   secret: secret
-  # Clients with specific secrets (Clients are resolved based on IP address)
-  # Each client MUST have a unique name.
-  clients:
-    - name: vpn-client
-      secret: secret
-      ips:
-        - 10.0.0.0/24
   auth-port: 1812
   listen-address: 0.0.0.0
   # Attribute list extension for RADIUS
@@ -40,27 +32,21 @@ radius:
       '[request.getAttributeValue("User-Name") == "john"]':
         Class:
           - RDP_HeadOffice_GP
-  ip-attributes:
-    - NAS-IP-Address
-    - NAS-IPv6-Address
 
 auth:
   providers:
     #  Could be :
     - LDAP
-    - AD
     - PROTECTIMUS_PASSWORD
     - PROTECTIMUS_OTP
-    - RADIUS_PROXY
+    # When BYPASS_PASSWORD is enabled, any password will be valid. Works both with inline-mode and without. Only works if LDAP or PROTECTIMUS_PASSWORD is not enabled
+    - BYPASS_PASSWORD
   # When bypass-otp is enabled, OTP is not requested for specified users
   bypass-otp:
     ldap-filter: (memberOf=cn=bypass-otp,ou=groups,dc=test,dc=com)
     usernames:
       - john
       - luci
-    ips:
-      - 10.0.0.0/24
-      - 1::/64
   # When re-enter-otp is enabled, password is not requested after unsuccessful OTP check
   re-enter-otp: true
 
@@ -69,18 +55,12 @@ auth:
   principal-normalization: true
 
   # Inline mode allows you to use 2fa in case when Access-Challenge is not supported.
-  # Inline mode can be activated with 'enabled: true' or using request attributes
+  # Inline mode can be activated with 'enabled: true' or using request attribute 'State=INLINE'
   # In this case password must be in following format 'password,otp', if using separator: ','
   inline-mode:
     enabled: false
     separator: ''
-    attributes:
-      State: INLINE
-      NAS-Identifier:
-        - home-nas
-        - work-nas
 
-#Configuration for LDAP auth provider
 ldap:
   base: dc=test,dc=com
   urls:
@@ -94,26 +74,11 @@ ldap:
   base-environment:
     -java.naming.referral: follow
 
-#Configuration for AD auth provider
-ad:
-  urls:
-    - ldap://127.0.0.1:389
-  domain: test.com
-  base-environment:
-    -java.naming.referral: follow
-
-#Configuration for PROTECTIMUS_PASSWORD/PROTECTIMUS_OTP auth provider
 protectimus-api:
   login: test@protectimus.com
   api-key: secret
   url: https://api.protectimus.com/
   resource-id: 1
-
-#Configuration for RADIUS_PROXY auth provider
-proxy:
-  secret: secret
-  auth-port: 1812
-  remote-address: 192.168.1.1
 
 logging:
   level:
